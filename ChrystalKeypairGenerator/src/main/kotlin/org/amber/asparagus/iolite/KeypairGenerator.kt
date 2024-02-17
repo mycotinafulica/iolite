@@ -1,4 +1,4 @@
-package org.example.iolite
+package org.amber.asparagus.iolite
 
 import org.bouncycastle.pqc.jcajce.provider.BouncyCastlePQCProvider
 import org.bouncycastle.pqc.jcajce.spec.KyberParameterSpec
