@@ -41,6 +41,7 @@ class IoliteController {
     @PostMapping("/handshake")
     fun handshake(@RequestBody handshakeInput: HandshakeInput): ResponseEntity<HandshakeOutput> {
         val encapsulatedKey = handshakeInput.encapsulatedSecret
+        println("Encapsulated key : $encapsulatedKey")
         val sessionKey      = Utils.decapsulateKey(privateKey, encapsulatedKey)
         val sessionId       = UUID.randomUUID().toString()
 

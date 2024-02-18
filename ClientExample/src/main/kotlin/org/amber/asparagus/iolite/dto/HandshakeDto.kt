@@ -1,15 +1,14 @@
 package org.amber.asparagus.iolite.dto
 
-import com.fasterxml.jackson.annotation.JsonProperty
+import com.google.gson.annotations.SerializedName
 
 data class HandshakeInput(
-    @JsonProperty("encapsulated_secret")
+    @SerializedName("encapsulated_secret")
     val encapsulatedSecret: String
 )
 
 data class HandshakeOutput(
-    @JsonProperty("status")
     val status: String,
-    @JsonProperty("session_info")
+    @SerializedName("session_info")
     val sessionInfo: String
 )
