@@ -7,7 +7,10 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.logging.HttpLoggingInterceptor
 import org.amber.asparagus.iolite.crypto.Utils
+import org.amber.asparagus.iolite.dto.EchoInput
+import org.amber.asparagus.iolite.dto.EchoOutput
 import org.amber.asparagus.iolite.dto.HandshakeInput
+import org.amber.asparagus.iolite.dto.HandshakeOutput
 import java.util.*
 
 class Main {
@@ -44,8 +47,25 @@ class Main {
                 .build()
 
             val response = client.newCall(request).execute()
+            val handshakeResp = gson.fromJson(response.body?.string(), HandshakeOutput::class.java)
 
-            println(response.body?.toString())
+            val sessionId = Utils.aesGcmDecrypt(handshakeResp.sessionInfo, encapsulatedKey.encoded)
+
+            println("Session ID : $sessionId")
+
+            val echoInput = EchoInput(sessionId, Utils.aesGcmEncrypt("Hello world", encapsulatedKey.encoded))
+            val echoJson  = gson.toJson(echoInput)
+
+            val echoRequestBody = echoJson.toRequestBody(mediaType)
+            val echoRequest = Request.Builder()
+                .url("http://localhost:8080/iolite/api/echo")
+                .post(echoRequestBody)
+                .build()
+
+            val echoResponse = client.newCall(echoRequest).execute()
+            val echoRespObj  = gson.fromJson(echoResponse.body?.string(), EchoOutput::class.java)
+
+            println(echoRespObj.echo)
         }
 
         private fun createOkhttpClient(): OkHttpClient {

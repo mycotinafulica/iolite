@@ -1,6 +1,8 @@
 package org.amber.asparagus.iolite
 
 import org.amber.asparagus.iolite.crypto.Utils
+import org.amber.asparagus.iolite.dto.EchoInput
+import org.amber.asparagus.iolite.dto.EchoOutput
 import org.amber.asparagus.iolite.dto.HandshakeInput
 import org.amber.asparagus.iolite.dto.HandshakeOutput
 import org.springframework.beans.factory.annotation.Autowired
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.filter.CommonsRequestLoggingFilter
 import java.security.Security
 import java.util.*
 import kotlin.collections.HashMap
@@ -27,16 +30,14 @@ class IoliteController {
     @Qualifier("privateKey")
     private lateinit var privateKey: String
 
-    /*@GetMapping("/handshake")
-    fun handshake(): String {
-        println("Calling handshake")
-        println("Private key : $privateKey")
+    @PostMapping("/echo")
+    fun echo(@RequestBody input: EchoInput): ResponseEntity<EchoOutput> {
+        val valueToEcho = Utils.aesGcmDecrypt(input.value, sessions[input.sessionInfo]!!)
 
-        val provider = Security.getProvider("BCPQC")
-        println(provider)
+        val response = EchoOutput("Echo from server : $valueToEcho!")
 
-        return "Hello from iolite server!"
-    }*/
+        return ResponseEntity<EchoOutput>(response, HttpStatus.OK)
+    }
 
     @PostMapping("/handshake")
     fun handshake(@RequestBody handshakeInput: HandshakeInput): ResponseEntity<HandshakeOutput> {
@@ -50,9 +51,8 @@ class IoliteController {
 
         sessions.put(sessionId, sessionKey)
 
-        val response = HandshakeOutput("00", sessionId)
+        val response = HandshakeOutput("00", Utils.aesGcmEncrypt(sessionId, sessionKey))
 
-        // TODO : Need to encrypt response with the key.
         return ResponseEntity<HandshakeOutput>(response, HttpStatus.OK)
     }
 }
