@@ -37,15 +37,18 @@ class KeypairGenerator {
             }
             else {
                 val spec = parsedArgument.spec ?: KyberParameterSpec.kyber512
+
                 val outputDir = parsedArgument.outputDirectory ?: "./"
                 val directory = File(outputDir)
                 if(!directory.exists()) {
                     directory.mkdirs()
                 }
                 if(parsedArgument.encoding != null && parsedArgument.encoding == "BASE64") {
+                    println("Generating Kyber ${spec.name} in BASE64 format")
                     generateBase64EncodedKeyPair(spec, "${outputDir}/")
                 }
                 else {
+                    println("Generating Kyber ${spec.name} in DER format")
                     generateDerEncodedKeyPair(spec, "${outputDir}/")
                 }
             }
