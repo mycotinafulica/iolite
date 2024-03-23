@@ -86,4 +86,16 @@ The binaries will be located on the target directory. For the key generator to f
 
 ## Future Work
 
-Coming soon.
+While this project shows how post quantum cryptography can be used, but it lacks of many characteristics that are desireable in production ready applications. 
+
+Some of those characteristics from security standpoint are :
+- The key distribution, as you can see that the public key is hardcoded into the client, which makes key rotation is a little bit of a pain.
+- You need to create your own mechanism to validate the integrity of the public key certificate. Usually the TLS protocol will do this for you.
+
+And without support in protocol levels such as TLS for example, and therefore leveraging the PKI technology, I'm afraid no ideal solution would found.
+
+But aside from the security concerns, from application programmers point of view, few problems need to be addressed as well :
+
+- As you can see, the current sample project handle the encryption and encryption individually for every endpoint, which is not ideal.
+
+This will not be an issue if the kyber is actually supported in protocol level, but for this concerns, there are actually some ways to get around it by using some filter / interceptors mechanism.
